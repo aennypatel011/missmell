@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MISTSMELL M33 — The scent of mist</title>
+<meta name="description" content="A scroll-driven 3D story: the stone breaks and the MISTSMELL M33 bottle appears.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='38 28 566 944'%3E%3Cg fill='%23ff5a1f'%3E%3Cpath d='M232 28h176a10 10 0 0 1 10 10v102a10 10 0 0 1-10 10h-32v63H266v-63h-34a10 10 0 0 1-10-10V38a10 10 0 0 1 10-10Z'/%3E%3Cpath d='M222 235h196v60l-98 50-98-50Z'/%3E%3Cpath d='M38 220 320 380 604 220v405l-94-45V380L320 482 38 328Z'/%3E%3Cpath d='M38 415 604 715v95L320 972 38 810V605l95 50v105l187 106 180-101L38 518Z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505; --fg:#eceae6; --muted:#8a8884; --soft:#cfcdc8; --acc:#ff5a1f; --acc-ink:#120600;
+  --line:rgba(255,255,255,.15);
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+ul{list-style:none}
+
+/* ---------- Layers ---------- */
+.backdrop{position:fixed;inset:0;z-index:0;background:radial-gradient(70% 60% at 55% 42%,#141210 0%,#090908 55%,#050505 100%)}
+.warm{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--w,0);
+  background:radial-gradient(circle at var(--gx,66%) var(--gy,45%),rgba(255,106,36,.34) 0%,rgba(160,60,15,.16) 22%,transparent 46%)}
+.stage{position:fixed;inset:0;z-index:1;width:100%;height:100%;display:block}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.8) 100%)}
+.grain{position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.08;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-6%,-2%)}80%{transform:translate(5%,4%)}100%{transform:translate(0,0)}}
+.ui{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;padding-top:env(safe-area-inset-top,0px)}
+.ui button{pointer-events:auto}
+.spacer{position:relative;height:1500vh}
+
+/* ---------- Header ---------- */
+.top{position:absolute;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px}
+.logo svg{display:block;height:32px;width:auto}
+.top-right{display:flex;align-items:center;gap:10px}
+.glass{border:1px solid var(--line);background:rgba(13,13,13,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.nav{display:none;gap:2px;padding:4px;border-radius:999px}
+.nav button{padding:7px 14px;border-radius:999px;font-size:12px;opacity:.75;transition:background .35s,color .35s,opacity .35s}
+.nav button:hover{opacity:1}
+.nav button[aria-current="step"]{background:var(--fg);color:#0a0a0a;opacity:1}
+.bag-btn{border-radius:999px;padding:11px 18px;font-size:12px;font-weight:500}
+.bag-btn span{display:inline-block;margin-left:4px;color:var(--acc)}
+.bag-btn.bump span{animation:bump .45s}
+@keyframes bump{50%{transform:scale(1.6)}}
+
+/* ---------- Type ---------- */
+.display{font-weight:500;line-height:.88;letter-spacing:-.045em}
+.split .ln{display:block;white-space:nowrap}
+.split .ln.it{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.02em}
+.split{--t:var(--v)}
+.ch{display:inline-block;white-space:pre;
+  --k:clamp(0, calc((var(--t) * (var(--n) + 8) - var(--i)) / 8), 1);
+  opacity:var(--k);transform:translateY(calc((1 - var(--k)) * .35em));
+  filter:blur(calc((1 - var(--k)) * 10px))}
+.it-word{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.02em}
+.meta{font-size:13px;line-height:1.55;color:var(--soft)}
+.kicker{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted)}
+.kicker::before{content:"";width:18px;height:1px;background:var(--acc)}
+.num{color:var(--acc)}
+
+/* ---------- Sections ---------- */
+.sec{position:absolute;inset:0;--v:0}
+.sec.off{visibility:hidden}
+.stag{--k:clamp(0, calc(var(--v) * 1.8 - var(--i, 0) * .16), 1);opacity:var(--k);transform:translateY(calc((1 - var(--k)) * 22px));filter:blur(calc((1 - var(--k)) * 6px))}
+.fadeall{opacity:var(--v);filter:blur(calc((1 - var(--v)) * 8px))}
+
+.cta{display:inline-flex;align-items:center;gap:10px;border-radius:999px;background:var(--acc);padding:12px 20px;font-size:13px;font-weight:600;color:var(--acc-ink);box-shadow:0 10px 40px -10px rgba(255,90,31,.6);transition:transform .25s}
+.cta:hover{transform:translateY(-2px)}
+.cta svg{transition:transform .25s}
+.cta:hover svg{transform:translateX(3px)}
+.ghost{border-radius:999px;border:1px solid var(--line);padding:12px 18px;font-size:13px;font-weight:500;transition:border-color .2s}
+.ghost:hover{border-color:rgba(255,255,255,.4)}
+
+/* Hero */
+#hero .lead{position:absolute;left:20px;top:calc(92px + env(safe-area-inset-top,0px));max-width:230px}
+#hero h1{position:absolute;left:20px;bottom:calc(64px + env(safe-area-inset-bottom,0px));font-size:clamp(54px,9.4vw,168px)}
+#hero h1 .ln.it{padding-left:1.1em}
+#hero .side{position:absolute;left:20px;top:calc(146px + env(safe-area-inset-top,0px));max-width:260px}
+#hero .side p{display:none;margin-bottom:16px}
+.hint{position:absolute;left:53%;bottom:56px;transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:10px;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted)}
+.hint i{display:block;width:1px;height:34px;background:linear-gradient(var(--fg),transparent);transform-origin:top;animation:hint 1.8s ease-in-out infinite}
+@keyframes hint{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* Scent */
+#scent .head{position:absolute;left:20px;top:calc(92px + env(safe-area-inset-top,0px))}
+#scent h2{font-size:clamp(44px,6.2vw,110px)}
+#scent .head p{margin-top:20px;max-width:300px}
+.notes{position:absolute;left:12px;right:12px;bottom:calc(28px + env(safe-area-inset-bottom,0px));display:flex;gap:8px}
+.note{flex:1;border-radius:14px;padding:12px}
+.note b{display:block;margin-bottom:12px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.note p{font-size:11px;line-height:1.55}
+.note p span{display:block}
+.edp{position:absolute;right:40px;bottom:max(40px,6vh);display:none;font-size:12px;letter-spacing:.04em;color:var(--muted)}
+
+/* Details */
+#details .head{position:absolute;left:20px;top:calc(88px + env(safe-area-inset-top,0px));max-width:420px}
+#details h2{font-size:clamp(42px,5.6vw,96px)}
+#details .head p{margin-top:20px;max-width:320px}
+.callout{position:absolute;left:0;top:0;display:flex;align-items:center;will-change:transform;
+  --k:clamp(0, calc(var(--v) * 1.8 - var(--i) * .14), 1);opacity:var(--k)}
+.callout.left{flex-direction:row-reverse}
+.callout .dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px rgba(255,90,31,.18)}
+.callout .cl-line{flex:none;width:14px;height:1px;background:linear-gradient(90deg,var(--acc),rgba(236,234,230,.45));transform:scaleX(var(--k));transform-origin:left}
+.callout.left .cl-line{transform-origin:right;background:linear-gradient(270deg,var(--acc),rgba(236,234,230,.45))}
+.callout .txt{width:92px;padding-left:8px;font-size:11px;line-height:1.35}
+.callout.left .txt{padding:0 8px 0 0;text-align:right}
+.callout .txt b{display:block;margin-bottom:3px;font-weight:500}
+.callout .txt b .num{margin-right:6px;font-size:11px}
+.callout .txt small{display:none;font-size:12px;color:var(--muted)}
+
+/* Composition */
+.comp{position:absolute;left:20px;right:20px;top:calc(84px + env(safe-area-inset-top,0px));display:grid;align-items:start;gap:22px}
+#comp h2{font-size:clamp(42px,5.6vw,96px)}
+.comp-more{display:none}
+.comp-more p{margin-top:20px;max-width:320px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chips li{border-radius:999px;padding:8px 12px;font-size:12px;color:var(--soft)}
+.chips b{margin-right:6px;font-weight:500;color:var(--acc)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.stat{border-top:1px solid var(--line);padding-top:14px}
+.stat .big{font-size:clamp(38px,4.6vw,76px);font-weight:500;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.stat .big em{margin-left:4px;font-family:var(--serif);font-style:italic;font-weight:400;font-size:.55em;letter-spacing:0;color:var(--soft)}
+.stat .lbl{margin-top:8px;font-size:12px;letter-spacing:.02em;color:var(--muted)}
+
+/* Shop */
+.shop{position:absolute;left:20px;right:20px;bottom:calc(28px + env(safe-area-inset-bottom,0px));max-width:400px}
+.shop h2{font-size:clamp(42px,5.6vw,96px)}
+.price{display:flex;align-items:baseline;gap:12px;margin:12px 0}
+.price strong{font-size:38px;font-weight:500;letter-spacing:-.03em}
+.price span{font-size:12px;color:var(--muted)}
+.sizes{display:flex;gap:8px;margin-bottom:16px}
+.size{border-radius:12px;border:1px solid var(--line);padding:12px 18px;text-align:left;font-size:13px;font-weight:500;transition:border-color .2s,background .2s}
+.size:hover{border-color:rgba(255,255,255,.4)}
+.size[aria-checked="true"]{border-color:var(--fg);background:rgba(255,255,255,.06)}
+.size small{display:block;margin-top:2px;font-size:11px;color:var(--muted)}
+.actions{display:flex;align-items:center;gap:10px}
+.perks{display:none;gap:8px;margin-top:22px;font-size:12px;color:var(--muted)}
+.perks li::before{content:"—";margin-right:8px;color:var(--acc)}
+.foot{position:absolute;left:40px;right:40px;bottom:18px;display:none;justify-content:space-between;font-size:11px;letter-spacing:.04em;color:var(--muted)}
+
+/* Rail */
+.rail{position:absolute;right:40px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;align-items:flex-end;gap:12px;font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}
+.rail .track{position:relative;width:1px;height:120px;background:var(--line)}
+.rail .track i{position:absolute;inset:0;background:var(--fg);transform-origin:top;transform:scaleY(0)}
+.mrail{position:absolute;right:6px;top:30%;width:2px;height:40%;border-radius:2px;background:rgba(255,255,255,.08)}
+.mrail i{position:absolute;inset:0;border-radius:2px;background:rgba(236,234,230,.55);transform-origin:top;transform:scaleY(0)}
+
+/* Bag drawer */
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .35s}
+.overlay.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;z-index:21;height:100%;width:min(380px,100%);display:flex;flex-direction:column;background:#0c0c0c;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .45s cubic-bezier(.2,.7,.2,1);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.open{transform:none}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-size:28px;font-weight:500;letter-spacing:-.03em}
+.drawer-head h3 em{font-family:var(--serif);font-weight:400}
+.items{flex:1;overflow-y:auto;padding:8px 22px}
+.items .empty{margin-top:40px;text-align:center;font-size:13px;color:var(--muted)}
+.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);font-size:13px}
+.item small{display:block;color:var(--muted)}
+.item button{font-size:12px;color:var(--muted);text-decoration:underline}
+.drawer-foot{padding:22px;border-top:1px solid var(--line)}
+.total{display:flex;justify-content:space-between;margin-bottom:16px;font-size:14px}
+.drawer-foot .cta{width:100%;justify-content:center}
+.toast{position:fixed;left:50%;bottom:28px;z-index:30;transform:translate(-50%,180%);border-radius:999px;padding:12px 20px;font-size:13px;white-space:nowrap;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.toast.show{transform:translate(-50%,0)}
+
+/* ---------- Desktop ---------- */
+@media (min-width:768px){
+  .top{padding:22px 40px}
+  .nav{display:flex}
+  #hero .lead{left:40px;top:96px;max-width:240px}
+  #hero h1{left:40px;bottom:max(36px,6vh)}
+  #hero .side{left:auto;right:40px;top:auto;bottom:max(56px,9vh)}
+  #hero .side p{display:block}
+  .hint{display:flex}
+  #scent .head{left:40px;top:22vh}
+  .notes{left:40px;right:auto;bottom:max(40px,6vh);gap:12px}
+  .note{flex:none;width:clamp(150px,11vw,180px);padding:14px 16px 16px}
+  .note b{margin-bottom:26px}
+  .note p{font-size:13px}
+  .edp{display:block}
+  #details .head{left:40px;top:15vh}
+  .callout .cl-line{width:clamp(36px,6vw,96px)}
+  .callout .txt{width:clamp(150px,15vw,220px);font-size:13px;padding-left:12px}
+  .callout.left .txt{padding:0 12px 0 0}
+  .callout .txt small{display:block}
+  .comp{left:40px;right:clamp(20px,7vw,110px);top:13vh;grid-template-columns:1fr 1.15fr;gap:clamp(24px,5vw,90px)}
+  .comp-more{display:block}
+  .stats{gap:28px 32px}
+  .shop{left:40px;right:auto;bottom:auto;top:50%;transform:translateY(-50%)}
+  .price{margin:22px 0 18px}
+  .price strong{font-size:40px}
+  .perks{display:grid}
+  .foot{display:flex}
+  .rail{display:flex}
+  .mrail{display:none}
+}
+@media (prefers-reduced-motion:reduce){.grain,.hint i{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="backdrop" aria-hidden="true"></div>
+<div class="warm" id="warm" aria-hidden="true"></div>
+<canvas class="stage" id="stage" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="ui">
+  <header class="top">
+    <button type="button" class="logo" id="logo" aria-label="MISTSMELL — back to top">
+      <svg viewBox="38 28 566 944" aria-hidden="true"><g fill="#ff5a1f"><path d="M232 28h176a10 10 0 0 1 10 10v102a10 10 0 0 1-10 10h-32v63H266v-63h-34a10 10 0 0 1-10-10V38a10 10 0 0 1 10-10Z"/><path d="M222 235h196v60l-98 50-98-50Z"/><path d="M38 220 320 380 604 220v405l-94-45V380L320 482 38 328Z"/><path d="M38 415 604 715v95L320 972 38 810V605l95 50v105l187 106 180-101L38 518Z"/></g></svg>
+    </button>
+    <div class="top-right">
+      <nav class="nav glass" aria-label="Story sections" id="nav">
+        <button type="button" data-go="0">The Scent</button>
+        <button type="button" data-go="1">Notes</button>
+        <button type="button" data-go="2">Details</button>
+        <button type="button" data-go="3">Shop</button>
+      </nav>
+      <button type="button" class="bag-btn glass" id="bagBtn">Bag <span id="bagCount">0</span></button>
+    </div>
+  </header>
+
+  <!-- 01 Hero -->
+  <section class="sec" id="hero" aria-label="MISTSMELL M33">
+    <p class="meta lead fadeall">Bright citrus and cold mint, warmed by ginger and resting on driftwood.</p>
+    <h1 class="display split" data-split="The scent|of mist"></h1>
+    <div class="side fadeall">
+      <p class="meta">M33 by MISTSMELL — a fresh, spicy fragrance made to be noticed without being loud.</p>
+      <button type="button" class="cta" id="discover">Discover M33
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+      </button>
+    </div>
+    <div class="hint fadeall" aria-hidden="true">Scroll to break the stone<i></i></div>
+  </section>
+
+  <!-- 02 Scent -->
+  <section class="sec off" id="scent" aria-label="The scent">
+    <div class="head">
+      <h2 class="display split" data-split="Fresh from|the elements."></h2>
+      <p class="meta stag" style="--i:3">A study in contrast — sharp orange and cold mint against warm ginger, star anise and driftwood.</p>
+    </div>
+    <ul class="notes">
+      <li class="note glass stag" style="--i:2"><b><span class="num">01</span> / Top</b><p><span>Orange</span><span>Mint</span><span>Bergamot</span></p></li>
+      <li class="note glass stag" style="--i:3"><b><span class="num">02</span> / Heart</b><p><span>Ginger</span><span>Lavender</span><span>Star anise</span></p></li>
+      <li class="note glass stag" style="--i:4"><b><span class="num">03</span> / Base</b><p><span>Driftwood</span><span>White pepper</span><span>Musk</span></p></li>
+    </ul>
+    <p class="edp stag" style="--i:5">M33 · Eau de Parfum — 100 ml</p>
+  </section>
+
+  <!-- 03 Details -->
+  <section class="sec off" id="details" aria-label="Details">
+    <div class="head">
+      <p class="kicker stag">The bottle</p>
+      <h2 class="display split" data-split="Every detail,|considered."></h2>
+      <p class="meta stag" style="--i:3">Frosted glass, a glossy black cap and a clean printed label — made to look as good on a shelf as it smells on skin.</p>
+    </div>
+    <ul id="callouts">
+      <li class="callout" style="--i:0"><i class="dot"></i><span class="cl-line"></span><div class="txt"><b><span class="num">01</span>Glossy black cap</b><small>Smooth, weighted cap with a flat lip on top.</small></div></li>
+      <li class="callout" style="--i:1"><i class="dot"></i><span class="cl-line"></span><div class="txt"><b><span class="num">02</span>Fine-mist spray</b><small>An even, light mist with every press.</small></div></li>
+      <li class="callout left" style="--i:2"><i class="dot"></i><span class="cl-line"></span><div class="txt"><b><span class="num">03</span>Frosted glass</b><small>Soft matte finish that diffuses the light.</small></div></li>
+      <li class="callout" style="--i:3"><i class="dot"></i><span class="cl-line"></span><div class="txt"><b><span class="num">04</span>Printed label</b><small>MISTSMELL mark and M33 code, printed on the glass.</small></div></li>
+      <li class="callout left" style="--i:4"><i class="dot"></i><span class="cl-line"></span><div class="txt"><b><span class="num">05</span>Thick glass base</b><small>A heavy base that keeps the bottle steady.</small></div></li>
+    </ul>
+  </section>
+
+  <!-- 04 Composition -->
+  <section class="sec off" id="comp" aria-label="Composition">
+    <div class="comp">
+      <div>
+        <p class="kicker stag">The composition</p>
+        <h2 class="display split" data-split="Fresh, but|it lingers."></h2>
+        <div class="comp-more">
+          <p class="meta stag" style="--i:3">Opens bright and cold with citrus and mint, then settles into warm ginger and soft woods close to the skin.</p>
+          <ul class="chips">
+            <li class="glass stag" style="--i:4"><b>01</b>Two sprays</li>
+            <li class="glass stag" style="--i:5"><b>02</b>Pulse points</li>
+            <li class="glass stag" style="--i:6"><b>03</b>Let it warm</li>
+          </ul>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat stag" style="--i:1"><p class="big"><span data-stat="0">0</span><em>%</em></p><p class="lbl">Parfum concentration</p></div>
+        <div class="stat stag" style="--i:2"><p class="big">8–<span data-stat="1">8</span><em>hrs</em></p><p class="lbl">Longevity on skin</p></div>
+        <div class="stat stag" style="--i:3"><p class="big"><span data-stat="2">0</span><em>ml</em></p><p class="lbl">Per spray</p></div>
+        <div class="stat stag" style="--i:4"><p class="big"><span data-stat="3">0</span><em>notes</em></p><p class="lbl">Ingredients in the blend</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Shop -->
+  <section class="sec off" id="shop" aria-label="Shop">
+    <div class="shop">
+      <p class="kicker stag" style="--i:0">MISTSMELL · M33 · Eau de Parfum</p>
+      <h2 class="display stag" style="--i:1"><span style="display:block">Carry the</span><span class="it-word" style="display:block">mist.</span></h2>
+      <p class="price stag" style="--i:2"><strong id="price">₹1,499</strong><span id="priceMl">100 ml</span></p>
+      <div class="sizes stag" style="--i:3" role="radiogroup" aria-label="Size">
+        <button type="button" class="size" role="radio" aria-checked="false" data-size="50">50 ml<small>₹899</small></button>
+        <button type="button" class="size" role="radio" aria-checked="true" data-size="100">100 ml<small>₹1,499</small></button>
+      </div>
+      <div class="actions stag" style="--i:4">
+        <button type="button" class="cta" id="addBag">Add to bag
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        </button>
+        <button type="button" class="ghost" id="sample">Try a sample</button>
+      </div>
+      <ul class="perks stag" style="--i:5">
+        <li>Free 2 ml sample with every bottle</li>
+        <li>Free shipping above ₹999</li>
+        <li>Easy 7-day returns</li>
+      </ul>
+    </div>
+    <footer class="foot stag" style="--i:6"><span>© 2026 MISTSMELL</span><span>Instagram · Contact · Stockists</span></footer>
+  </section>
+
+  <div class="rail" aria-hidden="true"><span id="railLabel">01 — Stone</span><div class="track"><i id="railFill"></i></div></div>
+  <div class="mrail" aria-hidden="true"><i id="mrailFill"></i></div>
+</div>
+
+<div class="spacer" aria-hidden="true"></div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Your bag" aria-hidden="true">
+  <div class="drawer-head"><h3>Your <em>bag</em></h3><button type="button" id="closeBag" aria-label="Close bag">✕</button></div>
+  <div class="items" id="items" data-lenis-prevent></div>
+  <div class="drawer-foot">
+    <div class="total"><span>Total</span><strong id="total">₹0</strong></div>
+    <button type="button" class="cta" id="checkout">Checkout</button>
+  </div>
+</aside>
+<div class="toast glass" id="toast" role="status"></div>
+
+<script>/*! Lenis 1.1.13 — MIT License — https://github.com/darkroomengineering/lenis */
+!function(t,i){"object"==typeof exports&&"undefined"!=typeof module?module.exports=i():"function"==typeof define&&define.amd?define(i):(t="undefined"!=typeof globalThis?globalThis:t||self).Lenis=i()}(this,(function(){"use strict";function clamp(t,i,e){return Math.max(t,Math.min(i,e))}class Animate{constructor(){this.isRunning=!1,this.value=0,this.from=0,this.to=0,this.currentTime=0}advance(t){var i;if(!this.isRunning)return;let e=!1;if(this.duration&&this.easing){this.currentTime+=t;const i=clamp(0,this.currentTime/this.duration,1);e=i>=1;const s=e?1:this.easing(i);this.value=this.from+(this.to-this.from)*s}else this.lerp?(this.value=function damp(t,i,e,s){return function lerp(t,i,e){return(1-e)*t+e*i}(t,i,1-Math.exp(-e*s))}(this.value,this.to,60*this.lerp,t),Math.round(this.value)===this.to&&(this.value=this.to,e=!0)):(this.value=this.to,e=!0);e&&this.stop(),null===(i=this.onUpdate)||void 0===i||i.call(this,this.value,e)}stop(){this.isRunning=!1}fromTo(t,i,{lerp:e,duration:s,easing:o,onStart:n,onUpdate:l}){this.from=this.value=t,this.to=i,this.lerp=e,this.duration=s,this.easing=o,this.currentTime=0,this.isRunning=!0,null==n||n(),this.onUpdate=l}}class Dimensions{constructor(t,i,{autoResize:e=!0,debounce:s=250}={}){this.wrapper=t,this.content=i,this.width=0,this.height=0,this.scrollHeight=0,this.scrollWidth=0,this.resize=()=>{this.onWrapperResize(),this.onContentResize()},this.onWrapperResize=()=>{this.wrapper instanceof Window?(this.width=window.innerWidth,this.height=window.innerHeight):(this.width=this.wrapper.clientWidth,this.height=this.wrapper.clientHeight)},this.onContentResize=()=>{this.wrapper instanceof Window?(this.scrollHeight=this.content.scrollHeight,this.scrollWidth=this.content.scrollWidth):(this.scrollHeight=this.wrapper.scrollHeight,this.scrollWidth=this.wrapper.scrollWidth)},e&&(this.debouncedResize=function debounce(t,i){let e;return function(...s){let o=this;clearTimeout(e),e=setTimeout((()=>{e=void 0,t.apply(o,s)}),i)}}(this.resize,s),this.wrapper instanceof Window?window.addEventListener("resize",this.debouncedResize,!1):(this.wrapperResizeObserver=new ResizeObserver(this.debouncedResize),this.wrapperResizeObserver.observe(this.wrapper)),this.contentResizeObserver=new ResizeObserver(this.debouncedResize),this.contentResizeObserver.observe(this.content)),this.resize()}destroy(){var t,i;null===(t=this.wrapperResizeObserver)||void 0===t||t.disconnect(),null===(i=this.contentResizeObserver)||void 0===i||i.disconnect(),this.wrapper===window&&this.debouncedResize&&window.removeEventListener("resize",this.debouncedResize,!1)}get limit(){return{x:this.scrollWidth-this.width,y:this.scrollHeight-this.height}}}class Emitter{constructor(){this.events={}}emit(t,...i){var e;let s=this.events[t]||[];for(let t=0,o=s.length;t<o;t++)null===(e=s[t])||void 0===e||e.call(s,...i)}on(t,i){var e;return(null===(e=this.events[t])||void 0===e?void 0:e.push(i))||(this.events[t]=[i]),()=>{var e;this.events[t]=null===(e=this.events[t])||void 0===e?void 0:e.filter((t=>i!==t))}}off(t,i){var e;this.events[t]=null===(e=this.events[t])||void 0===e?void 0:e.filter((t=>i!==t))}destroy(){this.events={}}}const t=100/6,i={passive:!1};class VirtualScroll{constructor(e,s={wheelMultiplier:1,touchMultiplier:1}){this.element=e,this.options=s,this.touchStart={x:0,y:0},this.lastDelta={x:0,y:0},this.window={width:0,height:0},this.emitter=new Emitter,this.onTouchStart=t=>{const{clientX:i,clientY:e}=t.targetTouches?t.targetTouches[0]:t;this.touchStart.x=i,this.touchStart.y=e,this.lastDelta={x:0,y:0},this.emitter.emit("scroll",{deltaX:0,deltaY:0,event:t})},this.onTouchMove=t=>{const{clientX:i,clientY:e}=t.targetTouches?t.targetTouches[0]:t,s=-(i-this.touchStart.x)*this.options.touchMultiplier,o=-(e-this.touchStart.y)*this.options.touchMultiplier;this.touchStart.x=i,this.touchStart.y=e,this.lastDelta={x:s,y:o},this.emitter.emit("scroll",{deltaX:s,deltaY:o,event:t})},this.onTouchEnd=t=>{this.emitter.emit("scroll",{deltaX:this.lastDelta.x,deltaY:this.lastDelta.y,event:t})},this.onWheel=i=>{let{deltaX:e,deltaY:s,deltaMode:o}=i;e*=1===o?t:2===o?this.window.width:1,s*=1===o?t:2===o?this.window.height:1,e*=this.options.wheelMultiplier,s*=this.options.wheelMultiplier,this.emitter.emit("scroll",{deltaX:e,deltaY:s,event:i})},this.onWindowResize=()=>{this.window={width:window.innerWidth,height:window.innerHeight}},window.addEventListener("resize",this.onWindowResize,!1),this.onWindowResize(),this.element.addEventListener("wheel",this.onWheel,i),this.element.addEventListener("touchstart",this.onTouchStart,i),this.element.addEventListener("touchmove",this.onTouchMove,i),this.element.addEventListener("touchend",this.onTouchEnd,i)}on(t,i){return this.emitter.on(t,i)}destroy(){this.emitter.destroy(),window.removeEventListener("resize",this.onWindowResize,!1),this.element.removeEventListener("wheel",this.onWheel,i),this.element.removeEventListener("touchstart",this.onTouchStart,i),this.element.removeEventListener("touchmove",this.onTouchMove,i),this.element.removeEventListener("touchend",this.onTouchEnd,i)}}return class Lenis{constructor({wrapper:t=window,content:i=document.documentElement,eventsTarget:e=t,smoothWheel:s=!0,syncTouch:o=!1,syncTouchLerp:n=.075,touchInertiaMultiplier:l=35,duration:r,easing:h=(t=>Math.min(1,1.001-Math.pow(2,-10*t))),lerp:a=.1,infinite:c=!1,orientation:u="vertical",gestureOrientation:d="vertical",touchMultiplier:p=1,wheelMultiplier:m=1,autoResize:v=!0,prevent:g,virtualScroll:S,__experimental__naiveDimensions:w=!1}={}){this._isScrolling=!1,this._isStopped=!1,this._isLocked=!1,this._preventNextNativeScrollEvent=!1,this._resetVelocityTimeout=null,this.time=0,this.userData={},this.lastVelocity=0,this.velocity=0,this.direction=0,this.animate=new Animate,this.emitter=new Emitter,this.onPointerDown=t=>{1===t.button&&this.reset()},this.onVirtualScroll=t=>{if("function"==typeof this.options.virtualScroll&&!1===this.options.virtualScroll(t))return;const{deltaX:i,deltaY:e,event:s}=t;if(this.emitter.emit("virtual-scroll",{deltaX:i,deltaY:e,event:s}),s.ctrlKey)return;const o=s.type.includes("touch"),n=s.type.includes("wheel");this.isTouching="touchstart"===s.type||"touchmove"===s.type;if(this.options.syncTouch&&o&&"touchstart"===s.type&&!this.isStopped&&!this.isLocked)return void this.reset();const l=0===i&&0===e,r="vertical"===this.options.gestureOrientation&&0===e||"horizontal"===this.options.gestureOrientation&&0===i;if(l||r)return;let h=s.composedPath();h=h.slice(0,h.indexOf(this.rootElement));const a=this.options.prevent;if(h.find((t=>{var i,e,s,l,r;return t instanceof HTMLElement&&("function"==typeof a&&(null==a?void 0:a(t))||(null===(i=t.hasAttribute)||void 0===i?void 0:i.call(t,"data-lenis-prevent"))||o&&(null===(e=t.hasAttribute)||void 0===e?void 0:e.call(t,"data-lenis-prevent-touch"))||n&&(null===(s=t.hasAttribute)||void 0===s?void 0:s.call(t,"data-lenis-prevent-wheel"))||(null===(l=t.classList)||void 0===l?void 0:l.contains("lenis"))&&!(null===(r=t.classList)||void 0===r?void 0:r.contains("lenis-stopped")))})))return;if(this.isStopped||this.isLocked)return void s.preventDefault();if(!(this.options.syncTouch&&o||this.options.smoothWheel&&n))return this.isScrolling="native",void this.animate.stop();s.preventDefault();let c=e;"both"===this.options.gestureOrientation?c=Math.abs(e)>Math.abs(i)?e:i:"horizontal"===this.options.gestureOrientation&&(c=i);const u=o&&this.options.syncTouch,d=o&&"touchend"===s.type&&Math.abs(c)>5;d&&(c=this.velocity*this.options.touchInertiaMultiplier),this.scrollTo(this.targetScroll+c,Object.assign({programmatic:!1},u?{lerp:d?this.options.syncTouchLerp:1}:{lerp:this.options.lerp,duration:this.options.duration,easing:this.options.easing}))},this.onNativeScroll=()=>{if(null!==this._resetVelocityTimeout&&(clearTimeout(this._resetVelocityTimeout),this._resetVelocityTimeout=null),this._preventNextNativeScrollEvent)this._preventNextNativeScrollEvent=!1;else if(!1===this.isScrolling||"native"===this.isScrolling){const t=this.animatedScroll;this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity,this.velocity=this.animatedScroll-t,this.direction=Math.sign(this.animatedScroll-t),this.isScrolling="native",this.emit(),0!==this.velocity&&(this._resetVelocityTimeout=setTimeout((()=>{this.lastVelocity=this.velocity,this.velocity=0,this.isScrolling=!1,this.emit()}),400))}},window.lenisVersion="1.1.13",t&&t!==document.documentElement&&t!==document.body||(t=window),this.options={wrapper:t,content:i,eventsTarget:e,smoothWheel:s,syncTouch:o,syncTouchLerp:n,touchInertiaMultiplier:l,duration:r,easing:h,lerp:a,infinite:c,gestureOrientation:d,orientation:u,touchMultiplier:p,wheelMultiplier:m,autoResize:v,prevent:g,virtualScroll:S,__experimental__naiveDimensions:w},this.dimensions=new Dimensions(t,i,{autoResize:v}),this.updateClassName(),this.targetScroll=this.animatedScroll=this.actualScroll,this.options.wrapper.addEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.addEventListener("pointerdown",this.onPointerDown,!1),this.virtualScroll=new VirtualScroll(e,{touchMultiplier:p,wheelMultiplier:m}),this.virtualScroll.on("scroll",this.onVirtualScroll)}destroy(){this.emitter.destroy(),this.options.wrapper.removeEventListener("scroll",this.onNativeScroll,!1),this.options.wrapper.removeEventListener("pointerdown",this.onPointerDown,!1),this.virtualScroll.destroy(),this.dimensions.destroy(),this.cleanUpClassName()}on(t,i){return this.emitter.on(t,i)}off(t,i){return this.emitter.off(t,i)}setScroll(t){this.isHorizontal?this.rootElement.scrollLeft=t:this.rootElement.scrollTop=t}resize(){this.dimensions.resize(),this.animatedScroll=this.targetScroll=this.actualScroll,this.emit()}emit(){this.emitter.emit("scroll",this)}reset(){this.isLocked=!1,this.isScrolling=!1,this.animatedScroll=this.targetScroll=this.actualScroll,this.lastVelocity=this.velocity=0,this.animate.stop()}start(){this.isStopped&&(this.isStopped=!1,this.reset())}stop(){this.isStopped||(this.isStopped=!0,this.animate.stop(),this.reset())}raf(t){const i=t-(this.time||t);this.time=t,this.animate.advance(.001*i)}scrollTo(t,{offset:i=0,immediate:e=!1,lock:s=!1,duration:o=this.options.duration,easing:n=this.options.easing,lerp:l=this.options.lerp,onStart:r,onComplete:h,force:a=!1,programmatic:c=!0,userData:u}={}){if(!this.isStopped&&!this.isLocked||a){if("string"==typeof t&&["top","left","start"].includes(t))t=0;else if("string"==typeof t&&["bottom","right","end"].includes(t))t=this.limit;else{let e;if("string"==typeof t?e=document.querySelector(t):t instanceof HTMLElement&&(null==t?void 0:t.nodeType)&&(e=t),e){if(this.options.wrapper!==window){const t=this.rootElement.getBoundingClientRect();i-=this.isHorizontal?t.left:t.top}const s=e.getBoundingClientRect();t=(this.isHorizontal?s.left:s.top)+this.animatedScroll}}if("number"==typeof t){if(t+=i,t=Math.round(t),this.options.infinite?c&&(this.targetScroll=this.animatedScroll=this.scroll):t=clamp(0,t,this.limit),t===this.targetScroll)return null==r||r(this),void(null==h||h(this));if(this.userData=null!=u?u:{},e)return this.animatedScroll=this.targetScroll=t,this.setScroll(this.scroll),this.reset(),this.preventNextNativeScrollEvent(),this.emit(),null==h||h(this),void(this.userData={});c||(this.targetScroll=t),this.animate.fromTo(this.animatedScroll,t,{duration:o,easing:n,lerp:l,onStart:()=>{s&&(this.isLocked=!0),this.isScrolling="smooth",null==r||r(this)},onUpdate:(t,i)=>{this.isScrolling="smooth",this.lastVelocity=this.velocity,this.velocity=t-this.animatedScroll,this.direction=Math.sign(this.velocity),this.animatedScroll=t,this.setScroll(this.scroll),c&&(this.targetScroll=t),i||this.emit(),i&&(this.reset(),this.emit(),null==h||h(this),this.userData={},this.preventNextNativeScrollEvent())}})}}}preventNextNativeScrollEvent(){this._preventNextNativeScrollEvent=!0,requestAnimationFrame((()=>{this._preventNextNativeScrollEvent=!1}))}get rootElement(){return this.options.wrapper===window?document.documentElement:this.options.wrapper}get limit(){return this.options.__experimental__naiveDimensions?this.isHorizontal?this.rootElement.scrollWidth-this.rootElement.clientWidth:this.rootElement.scrollHeight-this.rootElement.clientHeight:this.dimensions.limit[this.isHorizontal?"x":"y"]}get isHorizontal(){return"horizontal"===this.options.orientation}get actualScroll(){return this.isHorizontal?this.rootElement.scrollLeft:this.rootElement.scrollTop}get scroll(){return this.options.infinite?function modulo(t,i){return(t%i+i)%i}(this.animatedScroll,this.limit):this.animatedScroll}get progress(){return 0===this.limit?1:this.scroll/this.limit}get isScrolling(){return this._isScrolling}set isScrolling(t){this._isScrolling!==t&&(this._isScrolling=t,this.updateClassName())}get isStopped(){return this._isStopped}set isStopped(t){this._isStopped!==t&&(this._isStopped=t,this.updateClassName())}get isLocked(){return this._isLocked}set isLocked(t){this._isLocked!==t&&(this._isLocked=t,this.updateClassName())}get isSmooth(){return"smooth"===this.isScrolling}get className(){let t="lenis";return this.isStopped&&(t+=" lenis-stopped"),this.isLocked&&(t+=" lenis-locked"),this.isScrolling&&(t+=" lenis-scrolling"),"smooth"===this.isScrolling&&(t+=" lenis-smooth"),t}updateClassName(){this.cleanUpClassName(),this.rootElement.className=`${this.rootElement.className} ${this.className}`.trim()}cleanUpClassName(){this.rootElement.className=this.rootElement.className.replace(/lenis(-\w+)?/g,"").trim()}}}));
+//# sourceMappingURL=lenis.min.js.map
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+/* ================= Helpers ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const clamp01 = x => Math.min(1, Math.max(0, x));
+const ss = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const band = (p, a, b, c, d) => ss(a, b, p) * (1 - ss(c, d, p));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const lerp = (a, b, t) => a + (b - a) * t;
+const inr = n => '₹' + n.toLocaleString('en-IN');
+let seed = 11;
+const rnd = (a = 0, b = 1) => { seed = (seed * 16807) % 2147483647; return a + ((seed - 1) / 2147483646) * (b - a); };
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const LOGO_PATHS = [
+  'M232 28h176a10 10 0 0 1 10 10v102a10 10 0 0 1-10 10h-32v63H266v-63h-34a10 10 0 0 1-10-10V38a10 10 0 0 1 10-10Z',
+  'M222 235h196v60l-98 50-98-50Z',
+  'M38 220 320 380 604 220v405l-94-45V380L320 482 38 328Z',
+  'M38 415 604 715v95L320 972 38 810V605l95 50v105l187 106 180-101L38 518Z'
+];
+
+/* ================= Split headings into letters ================= */
+$$('[data-split]').forEach(h => {
+  const lines = h.dataset.split.split('|');
+  let i = 0;
+  h.setAttribute('aria-label', lines.join(' '));
+  h.innerHTML = lines.map((ln, li) =>
+    `<span aria-hidden="true" class="ln${li ? ' it' : ''}">` +
+    [...ln].map(c => `<span class="ch" style="--i:${i++}">${c}</span>`).join('') + `</span>`).join('');
+  h.style.setProperty('--n', i);
+});
+
+/* ================= Smooth scroll ================= */
+let lenis = null;
+if (window.Lenis && !reduceMotion) {
+  try { lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9, smoothWheel: true }); } catch (e) { lenis = null; }
+}
+let target = 0, prog = 0;
+const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
+const readScroll = () => { const m = maxScroll(); target = m > 0 ? clamp01(scrollY / m) : 0; };
+readScroll(); prog = target;
+function goTo(p) {
+  const y = p * maxScroll();
+  if (lenis) lenis.scrollTo(y, { duration: 2.4 });
+  else scrollTo({ top: y, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+const NAV_TARGETS = [0, 0.43, 0.62, 1];
+$$('#nav button').forEach(b => b.addEventListener('click', () => goTo(NAV_TARGETS[+b.dataset.go])));
+$('#logo').addEventListener('click', () => goTo(0));
+$('#discover').addEventListener('click', () => goTo(0.43));
+
+/* ================= Shop + bag ================= */
+const PRICES = { 50: 899, 100: 1499 };
+let size = 100;
+const bag = [];
+$$('.size').forEach(btn => btn.addEventListener('click', () => {
+  size = +btn.dataset.size;
+  $$('.size').forEach(b => b.setAttribute('aria-checked', b === btn));
+  $('#price').textContent = inr(PRICES[size]);
+  $('#priceMl').textContent = size + ' ml';
+}));
+function renderBag(bump) {
+  $('#bagCount').textContent = bag.length;
+  $('#total').textContent = inr(bag.reduce((s, x) => s + x.price, 0));
+  $('#items').innerHTML = bag.length
+    ? bag.map((x, i) => `<div class="item"><div>${x.name}<small>${inr(x.price)}</small></div><button type="button" data-rm="${i}">Remove</button></div>`).join('')
+    : '<p class="empty">Your bag is empty. Add M33 or a sample to start.</p>';
+  if (bump) { const b = $('#bagBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }
+}
+function add(item) { bag.push(item); renderBag(true); toast(item.name + ' added to bag'); }
+$('#addBag').addEventListener('click', () => add({ name: `M33 Eau de Parfum — ${size} ml`, price: PRICES[size] }));
+$('#sample').addEventListener('click', () => add({ name: 'M33 sample — 2 ml', price: 49 }));
+$('#items').addEventListener('click', e => {
+  const i = e.target.dataset.rm; if (i === undefined) return;
+  bag.splice(+i, 1); renderBag();
+});
+const openBag = () => { $('#drawer').classList.add('open'); $('#overlay').classList.add('show'); $('#drawer').setAttribute('aria-hidden', 'false'); if (lenis) lenis.stop(); };
+const closeBag = () => { $('#drawer').classList.remove('open'); $('#overlay').classList.remove('show'); $('#drawer').setAttribute('aria-hidden', 'true'); if (lenis) lenis.start(); };
+$('#bagBtn').addEventListener('click', openBag);
+$('#closeBag').addEventListener('click', closeBag);
+$('#overlay').addEventListener('click', closeBag);
+addEventListener('keydown', e => { if (e.key === 'Escape') closeBag(); });
+$('#checkout').addEventListener('click', () => {
+  if (!bag.length) return toast('Add something to your bag first');
+  bag.length = 0; renderBag(); closeBag(); toast('Order placed — thank you');
+});
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+renderBag();
+
+/* ================= UI refs ================= */
+const SECS = { hero: $('#hero'), scent: $('#scent'), details: $('#details'), comp: $('#comp'), shop: $('#shop') };
+const lastV = {};
+const navBtns = $$('#nav button');
+const callouts = $$('.callout');
+const STATS = [
+  { el: $('[data-stat="0"]'), from: 0, to: 22, dec: 0 },
+  { el: $('[data-stat="1"]'), from: 8, to: 10, dec: 0 },
+  { el: $('[data-stat="2"]'), from: 0, to: 0.1, dec: 1 },
+  { el: $('[data-stat="3"]'), from: 0, to: 9, dec: 0 }
+];
+const RAIL = [[0.30, '01 — Stone'], [0.51, '02 — Scent'], [0.70, '03 — Details'], [0.87, '04 — Composition'], [2, '05 — Own it']];
+const warm = $('#warm');
+
+/* ================= Three.js ================= */
+let has3D = false, renderer, scene, camera, rig, rock, bottle, plinth, plinthMat, spot, spray, sprayData, specks;
+let shards = [], cracks, rockMat, innerMat, dust, glow, coreLight;
+let ANCHORS = [], NOZZLE, CENTER;
+let mobile = innerWidth < 768;
+
+function roundTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.4, 'rgba(255,255,255,.6)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+
+try {
+  if (!window.THREE) throw new Error('three.js did not load');
+  renderer = new THREE.WebGLRenderer({ canvas: $('#stage'), antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.86;
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(0, 0, 8);
+  const dotTex = roundTex();
+
+  // Studio reflections
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), new THREE.MeshBasicMaterial({ color: 0x080808, side: THREE.BackSide })));
+  const strip = (c, w, h, pos) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide }));
+    m.position.set(...pos); m.lookAt(0, 0, 0); env.add(m);
+  };
+  strip(new THREE.Color(5, 4.8, 4.5), 7, 1.4, [-6, 5, 5]);
+  strip(new THREE.Color(2.2, 2.3, 2.5), 1.4, 10, [7, 0, 3]);
+  strip(new THREE.Color(3.5, 1.1, 0.3), 2.2, 9, [5, 0, -7]);
+  strip(new THREE.Color(0.6, 0.6, 0.6), 12, 2, [0, -7, 4]);
+  scene.environment = pmrem.fromScene(env, 0.04).texture;
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.16));
+  const key = new THREE.DirectionalLight(0xfff2e4, 1.7); key.position.set(-3, 5, 4); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xff6a2a, 1.8); rim.position.set(4, 1.5, -4); scene.add(rim);
+  const fill = new THREE.DirectionalLight(0xa9bccf, 0.45); fill.position.set(-5, -2, 2); scene.add(fill);
+
+  rig = new THREE.Group(); scene.add(rig);
+
+  /* ----- Rock built from shards ----- */
+  rock = new THREE.Group(); rig.add(rock);
+  const nz = (x, y, z) => Math.sin(x * 1.7 + y * 2.3) * 0.5 + Math.sin(y * 3.1 + z * 1.3) * 0.3 + Math.sin(z * 2.7 + x * 3.7) * 0.2;
+  const rg = new THREE.IcosahedronGeometry(1, 3);
+  const rp = rg.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < rp.count; i++) {
+    v.fromBufferAttribute(rp, i).normalize();
+    const d = 1 + 0.1 * nz(v.x * 1.8, v.y * 1.8, v.z * 1.8) + 0.045 * nz(v.x * 4.5, v.y * 4.5, v.z * 4.5);
+    v.multiplyScalar(d); v.x *= 0.92; v.y *= 1.18; v.z *= 0.86;
+    rp.setXYZ(i, v.x, v.y, v.z);
+  }
+  const SEEDS = [];
+  for (let i = 0; i < 30; i++) SEEDS.push(new THREE.Vector3(rnd(-1, 1), rnd(-1, 1), rnd(-1, 1)).normalize());
+  const faces = rp.count / 3, clusters = SEEDS.map(() => []), faceCluster = [];
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), cen = new THREE.Vector3();
+  for (let f = 0; f < faces; f++) {
+    a.fromBufferAttribute(rp, f * 3); b.fromBufferAttribute(rp, f * 3 + 1); c.fromBufferAttribute(rp, f * 3 + 2);
+    cen.copy(a).add(b).add(c).divideScalar(3).normalize();
+    let best = 0, bd = -2;
+    SEEDS.forEach((s, k) => { const d = s.dot(cen); if (d > bd) { bd = d; best = k; } });
+    clusters[best].push(f); faceCluster[f] = best;
+  }
+  rockMat = new THREE.MeshStandardMaterial({ color: 0x22211f, roughness: 0.84, metalness: 0.04, flatShading: true, envMapIntensity: 0.22 });
+  innerMat = new THREE.MeshStandardMaterial({ color: 0xff7a3d, emissive: 0xff5a1f, emissiveIntensity: 0.55, roughness: 0.7, flatShading: true, side: THREE.BackSide, envMapIntensity: 0.15 });
+  clusters.forEach(list => {
+    if (!list.length) return;
+    const centroid = new THREE.Vector3();
+    list.forEach(f => { for (let k = 0; k < 3; k++) centroid.add(v.fromBufferAttribute(rp, f * 3 + k)); });
+    centroid.divideScalar(list.length * 3);
+    const arr = new Float32Array(list.length * 9);
+    list.forEach((f, j) => { for (let k = 0; k < 3; k++) { v.fromBufferAttribute(rp, f * 3 + k).sub(centroid); arr.set([v.x, v.y, v.z], j * 9 + k * 3); } });
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(arr, 3)); g.computeVertexNormals();
+    const s = new THREE.Group();
+    s.add(new THREE.Mesh(g, rockMat), new THREE.Mesh(g, innerMat));
+    s.position.copy(centroid);
+    const dir = centroid.clone().normalize();
+    s.userData = {
+      base: centroid.clone(), dir,
+      vel: dir.clone().multiplyScalar(rnd(2.4, 4.6)).add(new THREE.Vector3(rnd(-0.6, 0.6), rnd(-0.4, 0.6), rnd(2.5, 6.5))),
+      spin: new THREE.Vector3(rnd(-4, 4), rnd(-4, 4), rnd(-4, 4)),
+      top: dir.y > 0.45 ? rnd(0.6, 1) : 0
+    };
+    rock.add(s); shards.push(s);
+  });
+  // Crack lines along shard borders
+  const edges = new Map(), key3 = p => `${p.x.toFixed(4)},${p.y.toFixed(4)},${p.z.toFixed(4)}`;
+  for (let f = 0; f < faces; f++) {
+    for (let k = 0; k < 3; k++) {
+      a.fromBufferAttribute(rp, f * 3 + k); b.fromBufferAttribute(rp, f * 3 + (k + 1) % 3);
+      const ka = key3(a), kb = key3(b), kk = ka < kb ? ka + '|' + kb : kb + '|' + ka;
+      if (!edges.has(kk)) edges.set(kk, { a: a.clone(), b: b.clone(), set: new Set() });
+      edges.get(kk).set.add(faceCluster[f]);
+    }
+  }
+  const lp = [];
+  edges.forEach(e => { if (e.set.size > 1) lp.push(e.a.x * 1.006, e.a.y * 1.006, e.a.z * 1.006, e.b.x * 1.006, e.b.y * 1.006, e.b.z * 1.006); });
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
+  cracks = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0xff7a3d, transparent: true, opacity: 0 }));
+  rock.add(cracks);
+
+  // Dust around the breaking rock
+  {
+    const n = 360, p0 = new Float32Array(n * 3), vel = new Float32Array(n * 3), pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const d = new THREE.Vector3(rnd(-1, 1), rnd(-1, 1), rnd(-1, 1)).normalize(), r = rnd(1.15, 2.2);
+      p0.set([d.x * r, d.y * r * 1.1, d.z * r], i * 3);
+      const sp = rnd(1, 3.5); vel.set([d.x * sp, d.y * sp, d.z * sp + rnd(0, 2)], i * 3);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    dust = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xd8d4cc, size: 0.028, map: dotTex, transparent: true, opacity: 0, depthWrite: false }));
+    dust.userData = { p0, vel, pos }; dust.frustumCulled = false; rig.add(dust);
+  }
+
+  // Warm glow inside the stone
+  const gc = document.createElement('canvas'); gc.width = gc.height = 128;
+  const gx = gc.getContext('2d'), grd = gx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grd.addColorStop(0, 'rgba(255,150,80,1)'); grd.addColorStop(0.35, 'rgba(255,90,31,.45)'); grd.addColorStop(1, 'rgba(255,90,31,0)');
+  gx.fillStyle = grd; gx.fillRect(0, 0, 128, 128);
+  glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(gc), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0 }));
+  glow.position.z = -0.4; rig.add(glow);
+  coreLight = new THREE.PointLight(0xff5a1f, 0, 6, 2); rig.add(coreLight);
+
+  /* ----- MISTSMELL M33 bottle ----- */
+  bottle = new THREE.Group(); rig.add(bottle);
+  const inner = new THREE.Group(); inner.position.y = -0.27; bottle.add(inner);
+  const arc = (pts, cx, cy, r, a0, a1, n = 8) => { for (let i = 0; i <= n; i++) { const t = a0 + (a1 - a0) * i / n; pts.push(new THREE.Vector2(cx + Math.cos(t) * r, cy + Math.sin(t) * r)); } };
+  // Body profile: flat bottom, rounded base corner, straight wall, rounded shoulder
+  const prof = [new THREE.Vector2(0, -0.71)];
+  arc(prof, 0.38, -0.65, 0.06, -Math.PI / 2, 0);
+  arc(prof, 0.34, 0.61, 0.1, 0, Math.PI / 2);
+  prof.push(new THREE.Vector2(0.14, 0.71), new THREE.Vector2(0, 0.71));
+  // Frosted bump texture
+  const bc = document.createElement('canvas'); bc.width = bc.height = 256;
+  const bx = bc.getContext('2d'), bimg = bx.createImageData(256, 256);
+  for (let i = 0; i < bimg.data.length; i += 4) { const n = 110 + Math.random() * 145; bimg.data[i] = bimg.data[i + 1] = bimg.data[i + 2] = n; bimg.data[i + 3] = 255; }
+  bx.putImageData(bimg, 0, 0);
+  const bump = new THREE.CanvasTexture(bc); bump.wrapS = bump.wrapT = THREE.RepeatWrapping; bump.repeat.set(5, 6);
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color: 0x9e927c, roughness: 0.5, metalness: 0, clearcoat: 0.3, clearcoatRoughness: 0.55,
+    bumpMap: bump, bumpScale: 0.0035, emissive: 0x1d1912, emissiveIntensity: 0.35, envMapIntensity: 0.42
+  });
+  inner.add(new THREE.Mesh(new THREE.LatheGeometry(prof, 72), glassMat));
+  // Clearer thick glass at the base
+  const baseBand = new THREE.Mesh(new THREE.CylinderGeometry(0.442, 0.442, 0.12, 72, 1, true),
+    new THREE.MeshPhysicalMaterial({ color: 0xf4f1e8, roughness: 0.18, transparent: true, opacity: 0.35, clearcoat: 1, depthWrite: false }));
+  baseBand.position.y = -0.6; inner.add(baseBand);
+
+  // Cap: glossy black, flat lip on top
+  const capProf = [new THREE.Vector2(0, 0.715), new THREE.Vector2(0.2, 0.715)];
+  arc(capProf, 0.2, 0.735, 0.02, -Math.PI / 2, 0, 4);
+  capProf.push(new THREE.Vector2(0.22, 1.15), new THREE.Vector2(0.262, 1.155));
+  arc(capProf, 0.262, 1.17, 0.015, -Math.PI / 2, 0, 4);
+  capProf.push(new THREE.Vector2(0.277, 1.225));
+  arc(capProf, 0.257, 1.225, 0.02, 0, Math.PI / 2, 4);
+  capProf.push(new THREE.Vector2(0, 1.245));
+  inner.add(new THREE.Mesh(new THREE.LatheGeometry(capProf, 72),
+    new THREE.MeshPhysicalMaterial({ color: 0x040404, roughness: 0.14, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 0.85 })));
+
+  // Printed label: logo + MISTSMELL + vertical M33
+  const lc = document.createElement('canvas'); lc.width = 1024; lc.height = 811;
+  const labelTex = new THREE.CanvasTexture(lc); labelTex.encoding = THREE.sRGBEncoding; labelTex.anisotropy = 8;
+  const spaced = (g, txt, cx, y, width) => {
+    const ws = [...txt].map(ch => g.measureText(ch).width), sum = ws.reduce((s, w) => s + w, 0);
+    const gap = (width - sum) / (txt.length - 1); let x = cx - width / 2;
+    [...txt].forEach((ch, i) => { g.fillText(ch, x, y); x += ws[i] + gap; });
+  };
+  const drawLabel = () => {
+    const g = lc.getContext('2d'); g.clearRect(0, 0, 1024, 811);
+    g.fillStyle = '#151515'; g.textAlign = 'left';
+    g.save(); const sc = 232 / 944; g.translate(296 - 566 * sc / 2, 452); g.scale(sc, sc); g.translate(-38, -28);
+    LOGO_PATHS.forEach(d => g.fill(new Path2D(d))); g.restore();
+    g.textBaseline = 'alphabetic'; g.font = '700 84px "Inter Tight", "Arial Black", Arial, sans-serif';
+    spaced(g, 'MISTSMELL', 524, 762, 620);
+    g.save(); g.translate(762, 64); g.rotate(Math.PI / 2);
+    g.textBaseline = 'middle'; g.font = '700 150px "Inter Tight", "Arial Black", Arial, sans-serif';
+    spaced(g, 'M33', 154, 0, 300); g.restore();
+    labelTex.needsUpdate = true;
+  };
+  drawLabel();
+  if (document.fonts) document.fonts.ready.then(drawLabel);
+  const label = new THREE.Mesh(new THREE.CylinderGeometry(0.4415, 0.4415, 1.1, 96, 1, true, -Math.PI / 2, Math.PI),
+    new THREE.MeshStandardMaterial({ map: labelTex, transparent: true, roughness: 0.45, metalness: 0, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }));
+  inner.add(label);
+  bottle.visible = false;
+
+  ANCHORS = [
+    new THREE.Vector3(0.2, 1.24, 0.08),
+    new THREE.Vector3(0.2, 0.76, 0.1),
+    new THREE.Vector3(-0.44, 0.32, 0.02),
+    new THREE.Vector3(0.2, -0.44, 0.39),
+    new THREE.Vector3(-0.4, -0.68, 0.14)
+  ];
+  ANCHORS.forEach(p => p.y -= 0.27);
+  NOZZLE = new THREE.Vector3(0.24, 0.92 - 0.27, 0.05);
+  CENTER = new THREE.Vector3(0, 0, 0);
+
+  /* ----- Stone plinth ----- */
+  const pg = new THREE.IcosahedronGeometry(1, 1), pp = pg.attributes.position;
+  for (let i = 0; i < pp.count; i++) {
+    v.fromBufferAttribute(pp, i);
+    const n = v.clone().normalize(), d = 1 + 0.08 * nz(n.x * 3, n.y * 3, n.z * 3);
+    v.multiplyScalar(d); v.y = Math.max(-0.6, Math.min(0.42, v.y));
+    pp.setXYZ(i, v.x * 1.65, v.y * 0.32, v.z * 1.25);
+  }
+  pg.computeVertexNormals();
+  plinthMat = new THREE.MeshStandardMaterial({ color: 0x1f1e1d, roughness: 0.9, metalness: 0.03, flatShading: true, envMapIntensity: 0.2, transparent: true, opacity: 0 });
+  plinth = new THREE.Mesh(pg, plinthMat); rig.add(plinth);
+  spot = new THREE.SpotLight(0xffffff, 0, 14, 0.55, 0.9, 1.4);
+  spot.position.set(-2.2, 4.2, 2.6); spot.target = plinth; rig.add(spot);
+
+  /* ----- Spray mist ----- */
+  {
+    const n = 760, pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    const t0 = new Float32Array(n), sp = new Float32Array(n), off = new Float32Array(n * 2);
+    for (let i = 0; i < n; i++) { t0[i] = rnd(); sp[i] = rnd(0.6, 1.25); const a = rnd(0, 6.283), r = Math.sqrt(rnd()); off[i * 2] = Math.cos(a) * r; off[i * 2 + 1] = Math.sin(a) * r; }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    spray = new THREE.Points(g, new THREE.PointsMaterial({ size: 0.022, map: dotTex, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    spray.frustumCulled = false; scene.add(spray);
+    sprayData = { n, pos, col, t0, sp, off };
+  }
+
+  /* ----- Background specks ----- */
+  {
+    const n = 260, pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) pos.set([rnd(-9, 9), rnd(-5, 5), rnd(-8, -1)], i * 3);
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    specks = new THREE.Points(g, new THREE.PointsMaterial({ color: 0x8a8884, size: 0.025, map: dotTex, transparent: true, opacity: 0.55, depthWrite: false }));
+    scene.add(specks);
+  }
+  has3D = true;
+} catch (err) {
+  console.warn('3D unavailable — page works without it.', err);
+}
+
+/* Bottle path: p, x, y (fractions of half-viewport), rotX, rotY, rotZ, scale, mobileY, mobileScale */
+const KF = [
+  [0.00, 0.06, 0.05, 0.00, 0.00, 0.00, 1.00, -0.02, 0.80],
+  [0.11, 0.06, 0.05, 0.00, 0.40, 0.00, 1.00, -0.02, 0.80],
+  [0.19, 0.06, 0.06, 0.70, 1.60, -0.70, 0.88, 0.04, 0.80],
+  [0.28, 0.14, 0.12, 0.40, 3.70, 0.55, 0.92, 0.14, 0.80],
+  [0.36, 0.22, 0.00, 0.07, 6.28, 0.00, 1.00, 0.06, 0.86],
+  [0.48, 0.22, 0.00, 0.07, 6.28, 0.00, 1.00, 0.06, 0.86],
+  [0.57, 0.16, 0.02, 0.05, 6.03, 0.00, 1.10, -0.24, 0.92],
+  [0.67, 0.16, 0.02, 0.05, 6.03, 0.00, 1.10, -0.24, 0.92],
+  [0.76, 0.00, -0.98, 0.50, 7.48, 0.00, 1.50, -0.84, 1.15],
+  [0.85, 0.00, -0.98, 0.50, 7.78, 0.00, 1.50, -0.84, 1.15],
+  [0.94, 0.32, 0.03, 0.06, 12.57, 0.00, 1.02, 0.50, 0.60],
+  [1.00, 0.32, 0.03, 0.06, 12.57, 0.00, 1.02, 0.50, 0.60]
+];
+function pose(p) {
+  let i = 0; while (i < KF.length - 2 && p > KF[i + 1][0]) i++;
+  const a = KF[i], b = KF[i + 1], t = ss(a[0], b[0], p);
+  return a.map((x, k) => lerp(x, b[k], t));
+}
+
+function resize() {
+  mobile = innerWidth < 768;
+  if (!has3D) return;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.6 : 2));
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+}
+addEventListener('resize', () => { resize(); readScroll(); });
+resize();
+
+let mx = 0, my = 0, smx = 0, smy = 0;
+addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; } });
+
+const V3 = (x = 0, y = 0, z = 0) => window.THREE ? new THREE.Vector3(x, y, z) : null;
+const tmp = V3(), tmp2 = V3();
+const SPRAY_DIR = has3D ? V3(1, 0.3, 0.05).normalize() : null, SPRAY_U = V3(0, 1, 0), SPRAY_W = V3(0, 0, 1);
+function toScreen(vec) { vec.project(camera); return [(vec.x + 1) / 2 * innerWidth, (1 - vec.y) / 2 * innerHeight]; }
+
+function update3D(p, time, vis) {
+  const hh = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+  const hw = hh * camera.aspect;
+  const [, fx, fy, rx, ry, rz, sc, mfy, ms] = pose(p);
+  smx += (mx - smx) * 0.05; smy += (my - smy) * 0.05;
+
+  const scale = mobile ? ms * Math.min(1, camera.aspect * 1.9) : sc;
+  rig.position.set(mobile ? 0 : fx * hw, (mobile ? mfy : fy) * hh + Math.sin(time * 0.8) * 0.035, 0);
+  rig.scale.setScalar(scale);
+  rig.rotation.set(smy * 0.06, smx * 0.12, 0);
+
+  // Stone timeline
+  const crack = ss(0.04, 0.10, p), lift = ss(0.075, 0.12, p), ex = ss(0.11, 0.25, p), E = Math.pow(ex, 1.25);
+  rock.visible = ex < 0.995;
+  rock.rotation.y = time * 0.12 + p * 2.5;
+  rock.rotation.x = Math.sin(time * 0.3) * 0.06;
+  const shake = crack * (1 - ex) * 0.02;
+  cracks.material.opacity = crack * (1 - ss(0.11, 0.14, p));
+  shards.forEach((s, i) => {
+    const u = s.userData;
+    s.position.copy(u.base).addScaledVector(u.dir, u.top * lift * 0.3).addScaledVector(u.vel, E);
+    s.rotation.set(u.spin.x * E + u.top * lift * 0.25, u.spin.y * E, u.spin.z * E - u.top * lift * 0.2);
+    if (shake) s.position.x += Math.sin(time * 61 + i) * shake;
+  });
+  innerMat.emissiveIntensity = 0.35 + crack * 0.5;
+  const g = ss(0.08, 0.13, p) * (1 - ss(0.24, 0.32, p));
+  glow.material.opacity = g * 0.75; glow.scale.setScalar(2.2 + ex * 3.5);
+  coreLight.intensity = g * 7;
+
+  // Dust
+  const dO = ss(0.05, 0.1, p) * (1 - ss(0.2, 0.3, p));
+  dust.material.opacity = dO * 0.85; dust.visible = dO > 0.005;
+  if (dust.visible) {
+    const { p0, vel, pos } = dust.userData;
+    for (let i = 0; i < pos.length; i += 3) {
+      pos[i] = p0[i] + vel[i] * ex + Math.sin(time * 0.7 + i) * 0.03;
+      pos[i + 1] = p0[i + 1] + vel[i + 1] * ex + Math.cos(time * 0.6 + i) * 0.03;
+      pos[i + 2] = p0[i + 2] + vel[i + 2] * ex;
+    }
+    dust.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // Bottle
+  bottle.visible = ex > 0.01;
+  bottle.scale.setScalar(0.62 + 0.38 * easeOut(ex));
+  bottle.rotation.set(rx + smy * 0.04, ry + smx * 0.22 + (p > 0.9 ? Math.sin(time * 0.5) * 0.12 : 0), rz);
+
+  // Plinth for the scent section
+  const pv = band(p, 0.27, 0.35, 0.48, 0.54);
+  plinth.visible = pv > 0.005;
+  plinthMat.opacity = pv;
+  plinth.position.set(0, -1.12 - (1 - pv) * 2.2, 0);
+  plinth.rotation.y = 0.35 + (1 - pv) * 0.6;
+  spot.intensity = pv * 5;
+
+  // Spray mist
+  const sv = ss(0.38, 0.45, p), sOut = 1 - ss(0.46, 0.5, p), sOn = sv > 0.001 && sOut > 0.001;
+  spray.visible = sOn;
+  if (sOn) {
+    bottle.updateMatrixWorld();
+    tmp.copy(NOZZLE); bottle.localToWorld(tmp);
+    const L = 3.2 * scale, { n, pos, col, t0, sp, off } = sprayData;
+    for (let i = 0; i < n; i++) {
+      const u = clamp01(sv * 1.7 - t0[i] * 0.7);
+      if (u <= 0) { pos[i * 3] = 999; continue; }
+      const d = u * L * sp[i], spread = d * 0.26;
+      tmp2.copy(tmp).addScaledVector(SPRAY_DIR, d)
+        .addScaledVector(SPRAY_U, off[i * 2] * spread + u * u * 0.25 + Math.sin(time * 0.8 + i) * 0.02 * u)
+        .addScaledVector(SPRAY_W, off[i * 2 + 1] * spread);
+      pos.set([tmp2.x, tmp2.y, tmp2.z], i * 3);
+      const bright = (1 - u * 0.75) * sOut;
+      col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = bright;
+    }
+    spray.geometry.attributes.position.needsUpdate = true;
+    spray.geometry.attributes.color.needsUpdate = true;
+  }
+
+  specks.rotation.y = time * 0.01;
+  renderer.render(scene, camera);
+
+  // Callouts track the bottle
+  if (vis.details > 0.01) {
+    bottle.updateMatrixWorld();
+    callouts.forEach((el, i) => {
+      tmp.copy(ANCHORS[i]); bottle.localToWorld(tmp);
+      const [x, y] = toScreen(tmp);
+      el.style.transform = el.classList.contains('left')
+        ? `translate(${x + 4.5}px, ${y}px) translate(-100%, -50%)`
+        : `translate(${x - 4.5}px, ${y}px) translateY(-50%)`;
+    });
+  }
+  // Warm glow behind the bottle in the shop
+  if (vis.shop > 0.01) {
+    tmp.copy(CENTER); bottle.localToWorld(tmp);
+    const [x, y] = toScreen(tmp);
+    warm.style.setProperty('--gx', x + 'px'); warm.style.setProperty('--gy', y + 'px');
+  }
+  warm.style.setProperty('--w', (vis.shop).toFixed(3));
+}
+
+/* ================= Main loop ================= */
+const t0 = performance.now();
+let lastNav = -1, lastRail = '';
+function frame(now) {
+  if (lenis) lenis.raf(now);
+  readScroll();
+  const time = (now - t0) / 1000;
+  const intro = easeOut(clamp01(time / 1.6));
+  prog = reduceMotion ? target : prog + (target - prog) * (lenis ? 0.25 : 0.09);
+  if (Math.abs(target - prog) < 1e-5) prog = target;
+  const p = prog;
+
+  const vis = {
+    hero: intro * (1 - ss(0.15, 0.22, p)),
+    scent: band(p, 0.33, 0.39, 0.47, 0.51),
+    details: band(p, 0.53, 0.58, 0.66, 0.70),
+    comp: band(p, 0.72, 0.77, 0.83, 0.87),
+    shop: ss(0.89, 0.95, p)
+  };
+  for (const k in SECS) {
+    const v = Math.round(vis[k] * 2000) / 2000;
+    if (v !== lastV[k]) {
+      SECS[k].style.setProperty('--v', v);
+      SECS[k].classList.toggle('off', v < 0.005);
+      lastV[k] = v;
+    }
+  }
+
+  STATS.forEach((s, i) => {
+    const k = easeOut(clamp01(vis.comp * 1.6 - i * 0.12));
+    const txt = (s.from + (s.to - s.from) * k).toFixed(s.dec);
+    if (s.el.textContent !== txt) s.el.textContent = txt;
+  });
+
+  const active = p < 0.30 ? 0 : p < 0.51 ? 1 : p < 0.87 ? 2 : 3;
+  if (active !== lastNav) {
+    navBtns.forEach((b, i) => i === active ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'));
+    lastNav = active;
+  }
+  const rf = `scaleY(${p.toFixed(4)})`;
+  $('#railFill').style.transform = rf; $('#mrailFill').style.transform = rf;
+  const label = RAIL.find(r => p < r[0])[1];
+  if (label !== lastRail) { $('#railLabel').textContent = label; lastRail = label; }
+
+  if (has3D) update3D(p, time, vis);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
